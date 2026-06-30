@@ -4,12 +4,13 @@ public class TestData {
 
     /**   E-MAILS E SENHAS */
     public static final String EMAIL_VALIDO = "admin@qatest.com";
-    public static final String EMAIL_INVALIDO = "teste@teste.com";
+    public static final String EMAIL_INVALIDO = "teste.com";
     public static final String EMAIL_INEXISTENTE = "teste@teste.com";
     public static final String EMAIL_VAZIO = "";
 
     public static final String PASSWORD_VAZIO = "";
-    public static final String PASSWORD_INVALIDO = "123";
+    public static final String PASSWORD_CURTO = "Te@14";
+    public static final String PASSWORD_INVALIDO = "Teste@321";
     public static final String PASSWORD_VALIDO = "Teste@123";
 
     /**   MENSAGENS */

@@ -9,7 +9,7 @@ import java.time.Duration;
 
 public class CategoryUtil {
 
-    public static void acessarTelaCategorias(WebDriver driver) {
+    public static void acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(WebDriver driver) {
 
         // Guarda a aba atual
         String janelaAtual = driver.getWindowHandle();
@@ -34,6 +34,24 @@ public class CategoryUtil {
         wait.until(ExpectedConditions.elementToBeClickable(
                 By.cssSelector("[data-testid='add-category-btn']")
         )).click();
+    }
+
+    public static void acessarTelaCategorias(WebDriver driver) {
+
+        String janelaAtual = driver.getWindowHandle();
+
+        driver.findElement(By.cssSelector("[data-testid='new-category-button']")).click();
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        wait.until(ExpectedConditions.numberOfWindowsToBe(2));
+
+        for (String janela : driver.getWindowHandles()) {
+            if (!janela.equals(janelaAtual)) {
+                driver.switchTo().window(janela);
+                break;
+            }
+        }
     }
 
     public static void salvarCategoria(WebDriver driver) {

@@ -30,6 +30,30 @@ public class TestData {
     public static final String MSG_EMAIL_SENHA_INVALIDOS =
             "Email ou senha inválidos";
 
+    /** MENSAGEM FORMULÁRIO LOGIN*/
+
+    public static final String MSG_NOME_TAMANHO_MAXIMO = "Nome deve ter no máximo 100 caracteres";
+    public static final String MSG_NOME_TAMANHO_MINIMO = "Nome deve ter no mínimo 3 caracteres";
+    public static final String MSG_NOME_OBRIGATORIO = "Nome completo é obrigatório";
+    public static final String MSG_NOME_APENAS_LETRAS_ESPACOS = "Nome deve conter apenas letras e espaços";
+
+    public static final String MSG_EMAIL_OBRIGATORIO = "E-mail é obrigatório";
+    public static final String MSG_EMAIL_INVALIDO = "E-mail inválido";
+    public static final String MSG_EMAIL_TAMANHO_MAXIMO = "E-mail deve ter no máximo 255 caracteres";
+
+    public static final String MSG_SENHA_TAMANHO_MINIMO = "Senha deve ter no mínimo 8 caracteres";
+    public static final String MSG_SENHA_CONTER_LETRA_MINUSCULA = "Senha deve ter pelo menos uma letra minúscula";
+    public static final String MSG_SENHA_CONTER_LETRA_MAIUSCULA = "Senha deve ter pelo menos uma letra maiúscula";
+    public static final String MSG_SENHA_CONTER_CARACTERE_ESPECIAL = "Senha deve ter pelo menos um caractere especial (@$!%*?&)";
+    public static final String MSG_SENHA_OBRIGATORIA = "Senha é obrigatória";
+
+    public static final String MSG_CONFIRM_SENHA_DIVERGENTE = "Senhas não conferem";
+    public static final String MSG_CONFIRM_SENHA_OBRIGATORIA = "Confirmação de senha é obrigatória";
+
+
+
+
+
     public static final String MSG_NOME_CATEGORIA_OBRIGATORIO =
             "Nome da categoria é obrigatório";
 

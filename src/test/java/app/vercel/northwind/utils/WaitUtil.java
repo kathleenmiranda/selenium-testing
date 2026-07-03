@@ -35,5 +35,4 @@ public class WaitUtil {
         return new WebDriverWait(driver, Duration.ofSeconds(TEMPO))
                 .until(ExpectedConditions.invisibilityOfElementLocated(by));
     }
-
 }

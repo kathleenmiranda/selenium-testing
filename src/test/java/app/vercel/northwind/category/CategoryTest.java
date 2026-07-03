@@ -13,6 +13,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.io.IOException;
 import java.time.Duration;
 
+import static app.vercel.northwind.utils.CategoryUtil.acessarTelaCategorias;
+import static app.vercel.northwind.utils.CategoryUtil.acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel;
 import static app.vercel.northwind.utils.LoginUtil.realizarLogin;
 
 
@@ -22,7 +24,7 @@ public class CategoryTest extends BaseTest {
     public void testNomeObrigatorio() throws IOException {
 
         realizarLogin(driver);
-        CategoryUtil.acessarTelaCategorias(driver);
+        acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(driver);
 
         driver.findElement(By.cssSelector("[data-testid='category-description-input']"))
                 .sendKeys("Descrição válida com mais de 10 caracteres");
@@ -48,7 +50,7 @@ public class CategoryTest extends BaseTest {
     public void deveExibirMensagemAoCadastrarCategoriaSemDescricao() throws Exception {
 
         realizarLogin(driver);
-        CategoryUtil.acessarTelaCategorias(driver);
+        acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(driver);
 
         WebElement nome =
                 driver.findElement(By.cssSelector("[data-testid='category-name-input']"));
@@ -73,11 +75,11 @@ public class CategoryTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Deve validar tamanho mínimo do nome da categoria")
-    public void deveValidarNomeComUmCaractere() throws Exception {
+    @DisplayName("Deve exibir menagem ao informar nome com menos de 2 caracteres")
+    public void deveExibirMensagemAoInformaNomeComMenosDe2Caracteres() throws Exception {
 
         realizarLogin(driver);
-        CategoryUtil.acessarTelaCategorias(driver);
+        acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(driver);
 
         driver.findElement(By.cssSelector("[data-testid='category-name-input']"))
                 .sendKeys("A");
@@ -104,7 +106,7 @@ public class CategoryTest extends BaseTest {
     public void deveExibirMensagemAoInformarNomeComMaisDe50Caracteres() throws Exception{
 
         realizarLogin(driver);
-        CategoryUtil.acessarTelaCategorias(driver);
+        acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(driver);
         String nome = "A".repeat(51);
 
         driver.findElement(By.cssSelector("[data-testid='category-name-input']"))
@@ -131,7 +133,7 @@ public class CategoryTest extends BaseTest {
     @DisplayName("Deve cadastrar categoria com sucesso")
     public void deveCadastrarCategoriaComSucesso() throws Exception {
         realizarLogin(driver);
-        CategoryUtil.acessarTelaCategorias(driver);
+        acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(driver);
 
         WebElement nome =
                 driver.findElement(By.cssSelector("[data-testid='category-name-input']"));
@@ -167,7 +169,7 @@ public class CategoryTest extends BaseTest {
     public void deveCancelarCadastroCategoria() throws Exception {
 
         realizarLogin(driver);
-        CategoryUtil.acessarTelaCategorias(driver);
+        acessarTelaCategorias(driver);
 
         driver.findElement(
                         By.cssSelector("[data-testid='cancel-category-btn']"))
@@ -181,4 +183,35 @@ public class CategoryTest extends BaseTest {
         ScreenshotUtil.capturar(driver,"cancelar-cadastro-categoria");
     }
 
+    @Test
+    @DisplayName("Deve editar um item da categoria")
+    public void deveEditarCategoria() throws Exception {
+
+        realizarLogin(driver);
+        acessarTelaCategorias(driver);
+
+        driver.findElement(By.cssSelector("[data-testid='category-search']")).sendKeys("Categoria_");
+        driver.findElement(By.cssSelector("[data-testid='edit-category-517']")).click();
+
+        driver.findElement(By.cssSelector("[data-testid='edit-category-name-input']")).click();
+        driver.findElement(By.cssSelector("[data-testid='edit-category-name-input']")).clear();
+        driver.findElement(By.cssSelector("[data-testid='edit-category-name-input']")).sendKeys("Calça Jeans");
+
+        driver.findElement(By.cssSelector("[data-testid='edit-category-description-input']")).click();
+        driver.findElement(By.cssSelector("[data-testid='edit-category-description-input']")).clear();
+        driver.findElement(By.cssSelector("[data-testid='edit-category-description-input']"))
+                .sendKeys("Alteração da descrição para teste automatizado edição.");
+
+        driver.findElement(By.cssSelector("[data-testid='update-category-btn']")).click();
+
+
+        ScreenshotUtil.capturar(driver,"categoria_editada");
+
+
+
+
+
+
+
+    }
 }

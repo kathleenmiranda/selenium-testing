@@ -19,4 +19,13 @@ public class LoginUtil {
         WaitUtil.esperarUrlContem(driver, "products");
     }
 
+    public static void criarConta(WebDriver driver){
+
+        WebElement cadastro = driver.findElement(By.cssSelector("a[href='/register']"));
+
+        cadastro.click();
+
+        WaitUtil.esperarUrlContem(driver, "register");
+    }
+
 }

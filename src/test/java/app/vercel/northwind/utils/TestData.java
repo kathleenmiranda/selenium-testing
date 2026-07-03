@@ -5,7 +5,7 @@ public class TestData {
     /**   E-MAILS E SENHAS */
     public static final String EMAIL_VALIDO = "admin@qatest.com";
     public static final String EMAIL_INVALIDO = "teste.com";
-    public static final String EMAIL_INEXISTENTE = "teste@teste.com";
+    public static final String EMAIL_INEXISTENTE = "qa@qa.com";
     public static final String EMAIL_VAZIO = "";
 
     public static final String PASSWORD_VAZIO = "";
@@ -46,6 +46,7 @@ public class TestData {
     public static final String MSG_SENHA_CONTER_LETRA_MAIUSCULA = "Senha deve ter pelo menos uma letra maiúscula";
     public static final String MSG_SENHA_CONTER_CARACTERE_ESPECIAL = "Senha deve ter pelo menos um caractere especial (@$!%*?&)";
     public static final String MSG_SENHA_OBRIGATORIA = "Senha é obrigatória";
+    public static final String MSG_SENHA_CARACTER_REPETIDO = "Senha não pode ter 3 ou mais caracteres repetidos";
 
     public static final String MSG_CONFIRM_SENHA_DIVERGENTE = "Senhas não conferem";
     public static final String MSG_CONFIRM_SENHA_OBRIGATORIA = "Confirmação de senha é obrigatória";

@@ -8,14 +8,11 @@ import app.vercel.northwind.utils.TestData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.IOException;
-import java.time.Duration;
 
 import static app.vercel.northwind.utils.ScreenshotUtil.*;
+import static app.vercel.northwind.utils.WaitUtil.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -28,17 +25,17 @@ public class LoginTest extends BaseTest {
 
         LoginPage loginPage = new LoginPage(driver);
 
-        loginPage.realizarLogin(TestData.EMAIL_VAZIO, TestData.PASSWORD_VAZIO);
+        loginPage.realizarLogin(
+                TestData.EMAIL_VAZIO, TestData.PASSWORD_VAZIO
+        );
 
         assertTrue(
-                loginPage.mensagemErroSenha().isDisplayed(),
-                "A mensagem de erro deveria estar visível."
+                loginPage.mensagemErroSenhaEstaVisivel()
         );
 
         assertEquals(
                 TestData.MSG_CAMPOS_OBRIGATORIOS,
-                loginPage.mensagemErroSenha().getText(),
-                "A mensagem exibida está incorreta."
+                loginPage.obterMensagemErroSenha()
         );
 
         capturar(driver, "campos-obrigatorios");
@@ -49,68 +46,82 @@ public class LoginTest extends BaseTest {
     public void deveExibirMensagemAoTentarLoginComEmailInvalido() throws Exception {
         LoginPage loginPage = new LoginPage(driver);
 
-        loginPage.realizarLogin(TestData.EMAIL_INVALIDO, TestData.PASSWORD_VALIDO);
+        loginPage.realizarLogin(
+                TestData.EMAIL_INVALIDO, TestData.PASSWORD_VALIDO
+        );
 
         assertTrue(
-                loginPage.mensagemErroEmail().isDisplayed(),
-                "A mensagem de erro deveria estar visível.");
+                loginPage.mensagemErroEmailEstaVisivel()
+        );
 
         Assertions.assertEquals(
-                TestData.MSG_FORMATO_EMAIL_INVALIDO, loginPage.mensagemErroEmail().getText(),
-                "A mensagem exibida está incorreta.");
+                TestData.MSG_FORMATO_EMAIL_INVALIDO,
+                loginPage.obterMensagemErroEmail()
+        );
 
         capturar(driver, "email-invalido");
     }
 
     @Test()
-    public void testeTentarAcessoComSenhaCurta() throws Exception {
+    @DisplayName("Deve exibir mensagem ao tentar realizar login com senha curta")
+    public void deveExibirMensagemInformandoSenhaCurta() throws Exception {
         LoginPage loginPage = new LoginPage(driver);
 
         loginPage.realizarLogin(
-                TestData.EMAIL_VALIDO, TestData.PASSWORD_CURTO);
+                TestData.EMAIL_VALIDO, TestData.PASSWORD_CURTO
+        );
 
        assertTrue(
-               loginPage.mensagemErroEmail().isDisplayed(),
-                "A mensagem de erro deveria estar visível.");
+               loginPage.mensagemErroEmailEstaVisivel()
+       );
 
         Assertions.assertEquals(
                 TestData.MSG_SENHA_CURTA,
-                loginPage.mensagemErroEmail().getText(),
-                "A mensagem exibida está incorreta.");
+                loginPage.obterMensagemErroEmail()
+        );
 
         capturar(driver, "senha-curta");
     }
 
     @Test()
-    public void testeValidarAcessoComEmailNaoCadastrado() throws Exception {
+    @DisplayName("Deve exibir mensagem ao tentar realizar login com email não cadastrado")
+    public void DeveExibirMensagemDeEmailNaoCadastrado() throws Exception {
         LoginPage  loginPage = new LoginPage(driver);
 
         loginPage.realizarLogin(
-                TestData.EMAIL_INEXISTENTE, TestData.PASSWORD_VALIDO);
+                TestData.EMAIL_INEXISTENTE, TestData.PASSWORD_VALIDO
+        );
 
         assertTrue(
-                loginPage.mensagemErroEmail().isDisplayed());
+                loginPage.mensagemErroEmailEstaVisivel()
+        );
 
         Assertions.assertEquals(
                 TestData.MSG_USUARIO_NAO_ENCONTRADO,
-                loginPage.mensagemErroEmail().getText());
+                loginPage.obterMensagemErroEmail()
+        );
 
         capturar(
                 driver, "usurio_nao_cadastrado");
     }
 
     @Test()
-    public void testeTentarAcessoComSenhaInexistente() throws Exception {
+    @DisplayName("Deve exibir mensagem ao tentar realizar login com e senha invalida")
+    public void deveExibirMensagemDeSenhaInvalida() throws Exception {
         LoginPage loginPage = new LoginPage(driver);
 
-        loginPage.realizarLogin(TestData.EMAIL_VALIDO, TestData.PASSWORD_INVALIDO);
+        loginPage.realizarLogin(
+                TestData.EMAIL_VALIDO, TestData.PASSWORD_INVALIDO
+        );
 
         assertTrue(
-                loginPage.mensagemErroSenha().isDisplayed());
+                loginPage.mensagemErroSenhaEstaVisivel()
+        );
 
         assertEquals(
                 TestData.MSG_EMAIL_SENHA_INVALIDOS,
-                loginPage.mensagemErroSenha().getText());
+                loginPage.obterMensagemErroSenha()
+        );
 
         capturar(driver, "senha-inexistente");
     }
@@ -121,34 +132,38 @@ public class LoginTest extends BaseTest {
     public void deveRealizarLoginComSucesso() throws Exception {
         LoginPage loginPage = new LoginPage(driver);
 
-        loginPage.realizarLogin(TestData.EMAIL_VALIDO, TestData.PASSWORD_VALIDO);
+        loginPage.realizarLogin(
+                TestData.EMAIL_VALIDO, TestData.PASSWORD_VALIDO
+        );
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        wait.until(ExpectedConditions.urlToBe("https://northwind-test-platform.vercel.app/products"));
+        esperarUrlContem(
+                driver,"https://northwind-test-platform.vercel.app/products");
 
         assertEquals("https://northwind-test-platform.vercel.app/products",
-                driver.getCurrentUrl());
+                driver.getCurrentUrl(),
+                "Não ocorreu redirecionamento para tela de produtos");
 
         capturar(driver, "acesso-valido");
     }
 
     @Test()
-    public void testeValidarAcessoComApenasEmailPreenchido() throws IOException {
-        WebElement inputEmail = driver.findElement(By.name("email"));
-        WebElement inputPassword = driver.findElement(By.name("password"));
-        WebElement button = driver.findElement(By.xpath("//button[@type='submit']"));
+    public void deveExibirMensagemInformandoCamposObrigatorios() throws IOException {
+        LoginPage  loginPage = new LoginPage(driver);
 
-        inputEmail.sendKeys(TestData.EMAIL_VALIDO);
-        inputPassword.click();
-        button.click();
+        loginPage.realizarLogin(
+                TestData.EMAIL_VALIDO, ""
+        );
 
-        WebElement mensagem = driver.findElement(By.cssSelector("[data-testid='password-error']"));
+        assertTrue(
+                loginPage.mensagemErroSenhaEstaVisivel()
+        );
 
-        assertTrue(mensagem.isDisplayed());
-        Assertions.assertEquals(TestData.MSG_CAMPOS_OBRIGATORIOS, mensagem.getText());
+        Assertions.assertEquals(
+                TestData.MSG_CAMPOS_OBRIGATORIOS,
+                loginPage.obterMensagemErroSenha()
+        );
 
         capturar(driver, "campos-obrigatorios");
     }
-
 
 }

@@ -1,11 +1,10 @@
 package app.vercel.northwind.page;
 
+import app.vercel.northwind.utils.WaitUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public class LoginPage {
-
 
     private final WebDriver driver;
 
@@ -28,16 +27,27 @@ public class LoginPage {
                 .click();
     }
 
-    public WebElement mensagemErroSenha() {
-        return driver.findElement(
-                By.cssSelector("[data-testid='password-error']")
-        );
-    }
-
-    public WebElement mensagemErroEmail() {
+    public boolean mensagemErroEmailEstaVisivel() {
         return driver.findElement(
                 By.cssSelector("[data-testid='email-error']")
-        );
+        ).isDisplayed();
+    }
+    public String obterMensagemErroEmail() {
+        return driver.findElement(
+                By.cssSelector("[data-testid='email-error']")
+        ).getText();
+    }
+
+    public boolean mensagemErroSenhaEstaVisivel() {
+        return driver.findElement(
+                By.cssSelector("[data-testid='password-error']")
+        ).isDisplayed();
+    }
+
+    public String obterMensagemErroSenha() {
+        return driver.findElement(
+                By.cssSelector("[data-testid='password-error']")
+        ).getText();
     }
 
     public void realizarLogin(String email, String senha) {
@@ -47,7 +57,14 @@ public class LoginPage {
     }
 
     public void abrirCadastro() {
-        driver.findElement(By.cssSelector("a[href='/register']")).click();
+        driver.findElement(
+                By.cssSelector("a[href='/register']")
+        ).click();
+
+        WaitUtil.esperarUrlContem(driver, "register");
+
     }
+
+
 }
 

@@ -1,6 +1,8 @@
 package app.vercel.northwind.register;
 
 import app.vercel.northwind.base.BaseTest;
+import app.vercel.northwind.page.LoginPage;
+import app.vercel.northwind.page.RegisterPage;
 import app.vercel.northwind.utils.TestData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -23,8 +25,10 @@ public class RegisterTest extends BaseTest {
     @DisplayName("Deve exibir mensagem de campo obrigatório para o e-mail")
     public void deveExibirMensagemQuandoEmailNaoForInformado() throws Exception {
 
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.abrirCadastro();
 
-        criarConta(driver);
+        RegisterPage registerPage = new RegisterPage();
 
         WebElement inputName = driver.findElement(By.cssSelector("[data-testid='full-name-input']"));
 

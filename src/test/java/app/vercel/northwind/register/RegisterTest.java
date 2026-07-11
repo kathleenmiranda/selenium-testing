@@ -28,25 +28,19 @@ public class RegisterTest extends BaseTest {
         LoginPage loginPage = new LoginPage(driver);
         loginPage.abrirCadastro();
 
-        RegisterPage registerPage = new RegisterPage();
+        RegisterPage registerPage = new RegisterPage(driver);
 
-        WebElement inputName = driver.findElement(By.cssSelector("[data-testid='full-name-input']"));
+        registerPage.preencherNomeCompleto("Quality Assurance");
 
-        inputName.sendKeys("Quality Assurance");
+        registerPage.preencherEmail("a");
+        registerPage.apagarEmail();
+        registerPage.clicarNomeCompleto();
 
-        WebElement inputEmail = driver.findElement(By.cssSelector("[data-testid='email-input']"));
 
-        inputEmail.sendKeys("a");
-        inputEmail.sendKeys(Keys.BACK_SPACE);
-        inputName.click();
+        assertTrue(registerPage.mensagemErroEmailVisivel());
 
-        WebElement mensagemErroEmail = driver.findElement(By.cssSelector("[data-testid='email-error']"));
+        Assertions.assertEquals(TestData.MSG_EMAIL_OBRIGATORIO, registerPage.obterMensagemErroEmail());
 
-        assertTrue(mensagemErroEmail.isDisplayed(),
-                "A mensagem de erro do campo e-mail deveria estar visível.");
-
-        Assertions.assertEquals(TestData.MSG_EMAIL_OBRIGATORIO, mensagemErroEmail.getText(),
-                "A mensagem apresentada para o campo e-mail está incorreta.");
         capturar(driver, "form-email-obrigatorio");
 
     }
@@ -55,23 +49,19 @@ public class RegisterTest extends BaseTest {
     @DisplayName("Deve exibir mensagem de e-mail inválido quando o formato for incorreto")
     public void deveExibirMensagemDeEmailInvalido() throws Exception {
 
-        criarConta(driver);
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.abrirCadastro();
 
-        WebElement inputName = driver.findElement(By.cssSelector("[data-testid='full-name-input']"));
+        RegisterPage registerPage = new RegisterPage(driver);
 
-        inputName.sendKeys("Quality Assurance");
+        registerPage.preencherNomeCompleto("Quality Assurance");
+        registerPage.preencherEmail("a");
+        registerPage.clicarNomeCompleto();
 
-        WebElement inputEmail = driver.findElement(By.cssSelector("[data-testid='email-input']"));
 
-        inputEmail.sendKeys("a");
-        inputName.click();
+        assertTrue(registerPage.mensagemErroEmailVisivel());
 
-        WebElement mensagemErroEmail = driver.findElement(By.cssSelector("[data-testid='email-error']"));
-
-        assertTrue(mensagemErroEmail.isDisplayed(),
-                "A mensagem de erro do campo e-mail deveria estar visível.");
-        Assertions.assertEquals(TestData.MSG_EMAIL_INVALIDO, mensagemErroEmail.getText(),
-                "A mensagem apresentada para o campo e-mail está incorreta.");
+        Assertions.assertEquals(TestData.MSG_EMAIL_INVALIDO, registerPage.obterMensagemErroEmail());
 
         capturar(driver, "form-email-invalido");
     }
@@ -79,24 +69,21 @@ public class RegisterTest extends BaseTest {
     @Test
     @DisplayName("Deve exibir mensagem de campo obrigatorio para a senha")
     public void deveExibirMensagemDeSenhaObrigatorio() throws IOException {
-        criarConta(driver);
-        WebElement inputName = driver.findElement(By.cssSelector("[data-testid='full-name-input']"));
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.abrirCadastro();
+        RegisterPage registerPage = new RegisterPage(driver);
 
-        inputName.sendKeys("Quality Assurance");
 
-        WebElement inputSenha = driver.findElement(By.cssSelector("[data-testid='password-input']"));
+        registerPage.preencherNomeCompleto("Quality Assurance");
+        registerPage.preencherEmail("qa@qa.com.br");
 
-        inputSenha.sendKeys("a");
-        inputSenha.sendKeys(Keys.BACK_SPACE);
-        inputName.click();
+        registerPage.preencherSenha("a");
+        registerPage.apagarSenha();
+        registerPage.clicarNomeCompleto();
 
-        WebElement mensagemErroPassword = driver.findElement(By.cssSelector("[data-testid='password-error']"));
+        assertTrue(registerPage.mensagemErroSenhaVisivel());
 
-        assertTrue(mensagemErroPassword.isDisplayed(),
-                "A mensagem de erro do campo senha deveria estar visível.");
-
-        assertEquals(TestData.MSG_SENHA_OBRIGATORIA, mensagemErroPassword.getText(),
-                "A mensagem apresentada para o campo senha está incorreta.");
+        assertEquals(TestData.MSG_SENHA_OBRIGATORIA, registerPage.obterMensagemErroSenha());
 
         capturar(driver, "form-senha-obrigatorio");
     }
@@ -105,32 +92,23 @@ public class RegisterTest extends BaseTest {
     @DisplayName("Deve ocultar a mensagem de erro ao informar uma senha válida")
     public void deveOcultarMensagemDeErroAoInformarSenhaValida() {
 
-        criarConta(driver);
-
-        WebElement inputSenha = driver.findElement(
-                By.cssSelector("[data-testid='password-input']")
-        );
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.abrirCadastro();
+        RegisterPage registerPage = new RegisterPage(driver);
 
         // Dado: existe um erro
-        inputSenha.sendKeys("a");
-
-        WebElement mensagemErro = driver.findElement(
-                By.cssSelector("[data-testid='password-error']")
-        );
+        registerPage.preencherSenha("a");
 
         Assertions.assertTrue(
-                mensagemErro.isDisplayed(),
-                "A mensagem de erro deveria estar visível."
-        );
+                registerPage.mensagemErroSenhaVisivel());
 
         // Quando: informo uma senha válida
-        inputSenha.clear();
-        inputSenha.sendKeys("Senha!123");
+        registerPage.limparSenha();
+        registerPage.preencherSenha("Senha!123");
 
         // Então: o erro desaparece
         Assertions.assertTrue(
-                driver.findElements(By.cssSelector("[data-testid='password-error']")).isEmpty(),
-                "A mensagem de erro deveria desaparecer após informar uma senha válida."
+                registerPage.mensagemErroSenhaNaoExiste()
         );
     }
 }

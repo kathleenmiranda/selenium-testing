@@ -3,6 +3,7 @@ package app.vercel.northwind.register;
 import app.vercel.northwind.base.BaseTest;
 import app.vercel.northwind.page.LoginPage;
 import app.vercel.northwind.page.RegisterPage;
+import app.vercel.northwind.utils.DataGenerator;
 import app.vercel.northwind.utils.TestData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static app.vercel.northwind.utils.ScreenshotUtil.capturar;
+import static app.vercel.northwind.utils.WaitUtil.esperarUrlContem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -27,6 +29,21 @@ public class RegisterTest extends BaseTest {
         registerPage = new RegisterPage(driver);
 
         loginPage.abrirCadastro();
+    }
+
+    @Test()
+    @DisplayName("Deve criar conta com sucesso")
+    public void deveCriarContaComSucesso() throws IOException {
+        registerPage.preencherNomeCompleto("Quality Assurance");
+        registerPage.preencherEmail(DataGenerator.gerarEmail());
+        registerPage.preencherSenha(TestData.PASSWORD_VALIDO);
+        registerPage.preencherConfirmSenha(TestData.PASSWORD_VALIDO);
+        registerPage.clicarBotao();
+
+        assertTrue(registerPage.mensagemContaCriadaComSucessoVisivel());
+
+        capturar(driver, "cadastro-criado-com-sucesso");
+
     }
 
     @Test()

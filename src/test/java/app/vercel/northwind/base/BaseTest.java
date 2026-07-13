@@ -29,7 +29,7 @@ public class BaseTest {
 
     @AfterEach
     public void tearDown() {
-        driver.quit();
+        //driver.quit();
     }
 
 }

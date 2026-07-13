@@ -23,6 +23,12 @@ public class RegisterPage {
             By.cssSelector("[data-testid='full-name-error']");
     private final By confirmPasswordError =
             By.cssSelector("[data-testid='confirm-password-error']");
+    private final By btnRegister =
+            By.cssSelector("[data-testid='register-button']");
+    private final By msg_sucess =
+            By.cssSelector(".Toastify__toast-container");
+    private final By iconSucess =
+            By.cssSelector(".Toastify__toast-icon");
 
     public RegisterPage(WebDriver driver) {
         this.driver = driver;
@@ -40,8 +46,9 @@ public class RegisterPage {
         driver.findElement(inputName).sendKeys(nome);
     }
 
-    public void preencherEmail(String email) {
+    public String preencherEmail(String email) {
         driver.findElement(inputEmail).sendKeys(email);
+        return email;
     }
 
     public void pressionarBackspaceEmail() {
@@ -105,6 +112,16 @@ public class RegisterPage {
     }
     public void pressionarBackspaceConfirmSenha() {
         driver.findElement(inputConfirmSenha).sendKeys(Keys.BACK_SPACE);
+    }
+    public void clicarBotao() {
+        driver.findElement(btnRegister).click();
+    }
+
+    public boolean mensagemContaCriadaComSucessoVisivel(){
+       return driver.findElement(msg_sucess).isDisplayed();
+    }
+    public String obterMensagemConfirmacaoContacriada(){
+      return obterTexto(msg_sucess);
     }
 
 

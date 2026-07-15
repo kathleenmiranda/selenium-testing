@@ -41,6 +41,8 @@ public class RegisterTest extends BaseTest {
 
         assertTrue(registerPage.mensagemContaCriadaComSucessoVisivel());
 
+        assertEquals(TestData.MSG_CADASTRO_REALIZADO_SUCESSO, registerPage.obterMensagemConfirmacaoContacriada());
+
         capturar(driver, "cadastro-criado-com-sucesso");
 
     }

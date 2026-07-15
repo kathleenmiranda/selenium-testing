@@ -1,5 +1,7 @@
 package app.vercel.northwind.page;
 
+import app.vercel.northwind.utils.TestData;
+import app.vercel.northwind.utils.WaitUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -27,8 +29,7 @@ public class RegisterPage {
             By.cssSelector("[data-testid='register-button']");
     private final By msg_sucess =
             By.cssSelector(".Toastify__toast-container");
-    private final By iconSucess =
-            By.cssSelector(".Toastify__toast-icon");
+
 
     public RegisterPage(WebDriver driver) {
         this.driver = driver;
@@ -121,7 +122,13 @@ public class RegisterPage {
        return driver.findElement(msg_sucess).isDisplayed();
     }
     public String obterMensagemConfirmacaoContacriada(){
-      return obterTexto(msg_sucess);
+        WaitUtil.esperarTextoNoElemento(
+                driver,
+                msg_sucess,
+                TestData.MSG_CADASTRO_REALIZADO_SUCESSO
+        );
+
+        return obterTexto(msg_sucess).trim();
     }
 
 

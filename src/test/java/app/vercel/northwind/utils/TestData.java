@@ -74,6 +74,8 @@ public class TestData {
             "Senhas não conferem";
     public static final String MSG_CONFIRM_SENHA_OBRIGATORIA =
             "Confirmação de senha é obrigatória";
+    public static final String MSG_CADASTRO_REALIZADO_SUCESSO =
+            "Cadastro realizado com sucesso! Redirecionando...";
 
 
     /** MENSAGEM CATEGORIA*/

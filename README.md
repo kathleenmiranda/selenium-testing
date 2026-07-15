@@ -131,22 +131,18 @@ O uso do padrão **Page Object** separa a lógica de localização de elementos 
 Sempre que um teste falha, uma captura de tela é gerada automaticamente para facilitar a análise do problema.
 
 As imagens ficam salvas na pasta [`/evidencias`](./evidencias).
+![Evidências de teste](./evidencias/acesso-valido.png)
 
-> 📸 Adicione aqui os prints de execução relevantes (falhas e/ou execuções completas), para que qualquer pessoa que acesse o repositório consiga visualizar rapidamente o comportamento dos testes sem precisar rodá-los localmente.
-
+![Evidências de teste](./evidencias/cadastro-criado-com-sucesso.png)
 ---
 
 ## Relatório
 
 Os relatórios de execução são gerados automaticamente pelo **Maven Surefire Plugin** em formato HTML, trazendo o resumo de testes executados, aprovados, falhos e o tempo de execução de cada suíte.
 
-> 🗂️ Adicione um print do relatório na pasta `/docs/report` para que a execução mais recente fique documentada visualmente neste repositório.
+Exemplo de referência de imagem:
 
-Exemplo de referência de imagem (após adicionar o print):
-
-```
 ![Relatório de execução](./docs/report/surefire-report.png)
-```
 
 ---
 

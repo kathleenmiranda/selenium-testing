@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static app.vercel.northwind.utils.ScreenshotUtil.capturar;
-import static app.vercel.northwind.utils.WaitUtil.esperarUrlContem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

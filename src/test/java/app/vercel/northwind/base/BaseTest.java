@@ -24,12 +24,11 @@ public class BaseTest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(60));
         driver.get(baseUrl);
 
-
     }
 
     @AfterEach
     public void tearDown() {
-        //driver.quit();
+        driver.quit();
     }
 
 }

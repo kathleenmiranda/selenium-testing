@@ -54,6 +54,9 @@ public class LoginPage {
         preencherEmail(email);
         preencherSenha(senha);
         clicarEntrar();
+
+        WaitUtil.esperarUrlContem(driver, "products");
+
     }
 
     public void abrirCadastro() {

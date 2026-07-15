@@ -35,4 +35,11 @@ public class WaitUtil {
         return new WebDriverWait(driver, Duration.ofSeconds(TEMPO))
                 .until(ExpectedConditions.invisibilityOfElementLocated(by));
     }
+
+    public static boolean esperarTextoNoElemento(WebDriver driver, By by, String texto) {
+
+        return new WebDriverWait(driver, Duration.ofSeconds(TEMPO))
+                .until(ExpectedConditions.textToBePresentInElementLocated(by, texto));
+    }
+
 }

@@ -1,8 +1,10 @@
 package app.vercel.northwind.category;
 
 import app.vercel.northwind.base.BaseTest;
+import app.vercel.northwind.page.CategoriaPage;
+import app.vercel.northwind.page.LoginPage;
 import app.vercel.northwind.utils.*;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
@@ -14,62 +16,55 @@ import java.io.IOException;
 import java.time.Duration;
 
 import static app.vercel.northwind.utils.CategoryUtil.acessarTelaCategorias;
-import static app.vercel.northwind.utils.CategoryUtil.acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel;
 import static app.vercel.northwind.utils.LoginUtil.realizarLogin;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class CategoryTest extends BaseTest {
+
+    LoginPage loginPage;
+    CategoriaPage  categoriaPage;
+
+    @BeforeEach
+    public void iniciarPagina(){
+
+        loginPage = new LoginPage(driver);
+        categoriaPage = new CategoriaPage(driver);
+
+        loginPage.realizarLogin(
+                TestData.EMAIL_VALIDO, TestData.PASSWORD_VALIDO);
+        categoriaPage.acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(driver);
+    }
+
     @Test
     @DisplayName("Deve exibir erro ao tentar salvar categoria sem nome")
-    public void testNomeObrigatorio() throws IOException {
+    public void deveExibirMensagemQuandoNomeCategoriaNaoInformado() throws IOException {
 
-        realizarLogin(driver);
-        acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(driver);
+        categoriaPage.preencherDescricao("Descrição válida com mais de 10 caracteres");
+        categoriaPage.clicarBtnSalvarCategoria();
 
-        driver.findElement(By.cssSelector("[data-testid='category-description-input']"))
-                .sendKeys("Descrição válida com mais de 10 caracteres");
+        assertTrue(categoriaPage.mensagemErroNomeCategoriaVisivel());
 
-        CategoryUtil.salvarCategoria(driver);
-
-        WebElement erro = WaitUtil.esperarElementoVisivel(
-                driver,
-                By.cssSelector("[data-testid='error-category-name']")
-        );
-
-        Assertions.assertTrue(erro.isDisplayed());
-
-        Assertions.assertEquals(
+        assertEquals(
                 TestData.MSG_NOME_CATEGORIA_OBRIGATORIO,
-                erro.getText());
+                categoriaPage.obterMensagemErroNomeCategooria());
 
-        ScreenshotUtil.capturar(driver,"nome_obrigatorio");
+        ScreenshotUtil.capturar(driver,"nome_categoria_obrigatorio");
     }
 
     @Test
     @DisplayName("Deve exibir mensagem ao tentar cadastrar categoria sem informar descrição")
     public void deveExibirMensagemAoCadastrarCategoriaSemDescricao() throws Exception {
 
-        realizarLogin(driver);
-        acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(driver);
+        categoriaPage.preencherNomeCategoria("Nome Categoria");
+        categoriaPage.clicarBtnSalvarCategoria();
 
-        WebElement nome =
-                driver.findElement(By.cssSelector("[data-testid='category-name-input']"));
+        assertTrue(categoriaPage.mensagemErroDescricaoCategoriaVisivel());
 
-        WebElement salvar =
-                driver.findElement(By.cssSelector("[data-testid='save-category-btn']"));
-
-        nome.sendKeys("Categoria Teste");
-
-        salvar.click();
-
-        WebElement erro =
-                driver.findElement(By.cssSelector("[data-testid='error-category-description']"));
-
-        Assertions.assertTrue(erro.isDisplayed());
-
-        Assertions.assertEquals(
+        assertEquals(
                 TestData.MSG_DESCRICAO_OBRIGATORIA,
-                erro.getText());
+                categoriaPage.obterMensagemErroDescricaoCategoria());
 
         ScreenshotUtil.capturar(driver,"categoria-descricao-obrigatoria");
     }
@@ -78,25 +73,15 @@ public class CategoryTest extends BaseTest {
     @DisplayName("Deve exibir menagem ao informar nome com menos de 2 caracteres")
     public void deveExibirMensagemAoInformaNomeComMenosDe2Caracteres() throws Exception {
 
-        realizarLogin(driver);
-        acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(driver);
+        categoriaPage.preencherNomeCategoria("A");
+        categoriaPage.preencherDescricao("Descrição válida para categoria");
+        categoriaPage.clicarBtnSalvarCategoria();
 
-        driver.findElement(By.cssSelector("[data-testid='category-name-input']"))
-                .sendKeys("A");
+        assertTrue(categoriaPage.mensagemErroNomeCategoriaVisivel());
 
-        driver.findElement(By.cssSelector("[data-testid='category-description-input']"))
-                .sendKeys("Descrição válida para categoria");
-
-        driver.findElement(By.cssSelector("[data-testid='save-category-btn']")).click();
-
-        WebElement erro =
-                driver.findElement(By.cssSelector("[data-testid='error-category-name']"));
-
-        Assertions.assertTrue(erro.isDisplayed());
-
-        Assertions.assertEquals(
+        assertEquals(
                 TestData.MSG_NOME_INVALIDO,
-                erro.getText());
+                categoriaPage.obterMensagemErroNomeCategooria());
 
         ScreenshotUtil.capturar(driver,"categoria-nome-curto");
     }
@@ -105,26 +90,17 @@ public class CategoryTest extends BaseTest {
     @DisplayName("Deve exibir mensagem ao informar nome com mais de 50 caracteres")
     public void deveExibirMensagemAoInformarNomeComMaisDe50Caracteres() throws Exception{
 
-        realizarLogin(driver);
-        acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(driver);
-        String nome = "A".repeat(51);
+        String nomeCategoria = "A".repeat(51);
 
-        driver.findElement(By.cssSelector("[data-testid='category-name-input']"))
-                .sendKeys(nome);
+        categoriaPage.preencherNomeCategoria(nomeCategoria);
+        categoriaPage.preencherDescricao("Descrição válida para categoria");
+        categoriaPage.clicarBtnSalvarCategoria();
 
-        driver.findElement(By.cssSelector("[data-testid='category-description-input']"))
-                .sendKeys("Descrição válida para categoria");
+        assertTrue(categoriaPage.mensagemErroNomeCategoriaVisivel());
 
-        driver.findElement(By.cssSelector("[data-testid='save-category-btn']")).click();
-
-        WebElement erro =
-                driver.findElement(By.cssSelector("[data-testid='error-category-name']"));
-
-        Assertions.assertTrue(erro.isDisplayed());
-
-        Assertions.assertEquals(
+        assertEquals(
                 TestData.MSG_NOME_INVALIDO,
-                erro.getText());
+                categoriaPage.obterMensagemErroNomeCategooria());
 
         ScreenshotUtil.capturar(driver,"categoria-nome-maximo");
     }
@@ -132,50 +108,30 @@ public class CategoryTest extends BaseTest {
     @Test
     @DisplayName("Deve cadastrar categoria com sucesso")
     public void deveCadastrarCategoriaComSucesso() throws Exception {
-        realizarLogin(driver);
-        acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(driver);
-
-        WebElement nome =
-                driver.findElement(By.cssSelector("[data-testid='category-name-input']"));
-
-        WebElement descricao =
-                driver.findElement(By.cssSelector("[data-testid='category-description-input']"));
-
-        WebElement salvar =
-                driver.findElement(By.cssSelector("[data-testid='save-category-btn']"));
-
         String nomeCategoria = "Categoria_" + System.currentTimeMillis();
 
-        nome.sendKeys(nomeCategoria);
+        categoriaPage.preencherNomeCategoria(nomeCategoria);
+        categoriaPage.preencherDescricao("Descrição sucinta de uma nova categoria.");
+        categoriaPage.clicarBtnSalvarCategoria();
 
-        descricao.sendKeys("Descrição sucinta de uma nova categoria.");
+        assertTrue(categoriaPage.mensagemSucessooCriacaoCategoria());
 
-        salvar.click();
+        assertEquals(
+                TestData.MSG_CATEGORIA_CADASTRADA,
+                categoriaPage.obterMensagemCategoriaCriadaComSucesso()
+        );
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10) );
-
-        WebElement toast = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        (By.className("Toastify__toast"))));
-
-        Assertions.assertTrue(toast.isDisplayed());
-        Assertions.assertTrue(toast.getText().contains(TestData.MSG_CATEGORIA_CADASTRADA));
-
-        ScreenshotUtil.capturar(driver,"categoria-cadastrada");
+        ScreenshotUtil.capturar(driver,"categoria-cadastrada-sucesso");
     }
 
     @Test
     @DisplayName("Deve fechar modal ao cancelar cadastro")
     public void deveCancelarCadastroCategoria() throws Exception {
 
-        realizarLogin(driver);
-        acessarTelaCategorias(driver);
 
-        driver.findElement(
-                        By.cssSelector("[data-testid='cancel-category-btn']"))
-                .click();
+        categoriaPage.clicarBtnCancelarCategoria();
 
-        Assertions.assertTrue(
+        assertTrue(
                 driver.findElements(
                                 By.cssSelector("[data-testid='category-name-input']"))
                         .isEmpty());

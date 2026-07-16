@@ -10,36 +10,49 @@ import java.time.Duration;
 
 public class WaitUtil {
 
-    private static final int TEMPO = 10;
+    private static final Duration TEMPO_ESPERA = Duration.ofSeconds(10);
 
-    public static WebElement esperarElementoVisivel(WebDriver driver, By by) {
 
-        return new WebDriverWait(driver, Duration.ofSeconds(TEMPO))
-                .until(ExpectedConditions.visibilityOfElementLocated(by));
+    private static WebDriverWait getWait(WebDriver driver) {
+        return new WebDriverWait(driver, TEMPO_ESPERA);
     }
 
-    public static WebElement esperarElementoClicavel(WebDriver driver, By by) {
-
-        return new WebDriverWait(driver, Duration.ofSeconds(TEMPO))
-                .until(ExpectedConditions.elementToBeClickable(by));
+    public static WebElement esperarElementoVisivel(WebDriver driver, By locator) {
+        return getWait(driver).until(
+                ExpectedConditions.visibilityOfElementLocated(locator)
+        );
     }
 
-    public static void esperarUrlContem(WebDriver driver, String texto) {
+    public static WebElement esperarElementoClicavel(WebDriver driver, By locator) {
+        return getWait(driver).until(
+                ExpectedConditions.elementToBeClickable(locator)
+        );
+    }
 
-        new WebDriverWait(driver, Duration.ofSeconds(TEMPO))
-                .until(ExpectedConditions.urlContains(texto));
+    public static void esperarUrlContem(WebDriver driver, String url) {
+        getWait(driver).until(
+                ExpectedConditions.urlContains(url)
+        );
     }
 
     public static boolean esperarElementoDesaparecer(WebDriver driver, By by) {
 
-        return new WebDriverWait(driver, Duration.ofSeconds(TEMPO))
-                .until(ExpectedConditions.invisibilityOfElementLocated(by));
+        return getWait(driver).until(
+                ExpectedConditions.invisibilityOfElementLocated(by)
+        );
     }
 
     public static boolean esperarTextoNoElemento(WebDriver driver, By by, String texto) {
 
-        return new WebDriverWait(driver, Duration.ofSeconds(TEMPO))
-                .until(ExpectedConditions.textToBePresentInElementLocated(by, texto));
+        return getWait(driver).until(
+                ExpectedConditions.textToBePresentInElementLocated(by, texto)
+        );
+    }
+
+    public static void esperarQuantidadeDeJanelas(WebDriver driver, int quantidade) {
+        getWait(driver).until(
+                ExpectedConditions.numberOfWindowsToBe(quantidade)
+        );
     }
 
 }

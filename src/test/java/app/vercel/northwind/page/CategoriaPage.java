@@ -4,31 +4,37 @@ import app.vercel.northwind.utils.TestData;
 import app.vercel.northwind.utils.WaitUtil;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.WebElement;
 
-import java.time.Duration;
+import java.util.List;
 
 
 public class CategoriaPage {
     private final WebDriver driver;
-    private final By inputDescricao =
+    private static By btnNewCategory =
+            By.cssSelector("[data-testid='new-category-button']");
+    private static  By addNewCategory =
+            By.cssSelector("[data-testid='add-category-btn']");
+    private final By inputDescription =
             By.cssSelector("[data-testid='category-description-input']");
     private final By inputCategory =
             By.cssSelector("[data-testid='category-name-input']");
 
-    private final By categoryNameError =
+    private final By errorNameCategory =
             By.cssSelector("[data-testid='error-category-name']");
-    private final By descritionError =
+    private final By errorDescription =
             By.cssSelector("[data-testid='error-category-description']");
-    private final By btnCriarCategoria =
-            By.cssSelector("[data-testid='add-category-btn']");
-    private final By btnSalvarCategoria =
+    private final By btnSaveCategory =
             By.cssSelector("[data-testid='save-category-btn']");
     private final By toast =
             By.cssSelector(".Toastify__toast--success");
-    private final By btnCancel =
-            By.cssSelector("[data-testid='cancel-category-btn']");
+
+    private final By searchCategory =
+            By.cssSelector("[data-testid='category-search']");
+    private final By inputEditCategoryName =
+            By.cssSelector("[data-testid='edit-category-name-input']");
+    private final By btnUpdateCategory =
+            By.cssSelector("[data-testid='update-category-btn']");
 
 
     public CategoriaPage(WebDriver driver) {
@@ -36,39 +42,63 @@ public class CategoriaPage {
     }
 
     public void preencherNomeCategoria(String nameCategory){
-        driver.findElement(inputCategory)
-                .sendKeys(nameCategory);
+        driver.findElement(inputCategory
+        ).sendKeys(nameCategory);
     }
-    public void preencherDescricao(String descricao){
-        driver.findElement(inputDescricao)
-                .sendKeys(descricao);
+    public void preencherDescricaoCategoria(String descricao){
+        driver.findElement(inputDescription
+        ).sendKeys(descricao);
     }
 
     public void clicarBtnSalvarCategoria(){
-        driver.findElement(btnSalvarCategoria).click();
+        driver.findElement(btnSaveCategory).click();
     }
 
-    public void clicarBtnCancelarCategoria(){
-        driver.findElement(btnCancel).click();
+    public void searchCategory(String category){
+        driver.findElement(searchCategory
+        ).sendKeys(category);
     }
+
+    public void openModalEditCategory() {
+        obterPrimeiraCategoria().click();
+    }
+    public void clearNameCategory(){
+        driver.findElement(
+                inputEditCategoryName
+        ).clear();
+    }
+
+    public void editNameCategory(String AtualizaNameCategory){
+        driver.findElement(inputEditCategoryName
+        ).sendKeys(AtualizaNameCategory);
+    }
+    public void clickBtnUpdateCategory(){
+        driver.findElement(
+                btnUpdateCategory
+        ).click();
+
+    }
+
+
     public String obterMensagemErroNomeCategooria() {
-        return driver.findElement(categoryNameError).getText();
+        return driver.findElement(errorNameCategory
+        ).getText();
     }
-
     public boolean mensagemErroNomeCategoriaVisivel() {
-        return driver.findElement(categoryNameError)
-                .isDisplayed();
+        return driver.findElement(errorNameCategory
+        ).isDisplayed();
     }
-
     public String obterMensagemErroDescricaoCategoria() {
-        return driver.findElement(descritionError).getText();
+        return driver.findElement(errorDescription
+        ).getText();
     }
 
     public boolean mensagemErroDescricaoCategoriaVisivel() {
-        return driver.findElement(descritionError).isDisplayed();
+        return driver.findElement(errorDescription
+        ).isDisplayed();
     }
 
-    public boolean mensagemSucessooCriacaoCategoria(){
+    public boolean mensagemSucessoCriacaoCategoria(){
         WaitUtil.esperarElementoVisivel(
                 driver,
                 toast
@@ -83,24 +113,24 @@ public class CategoriaPage {
                 toast,
                 TestData.MSG_CATEGORIA_CADASTRADA
         );
-
         return driver.findElement(toast).getText().trim();
     }
 
-    public static void acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(WebDriver driver) {
+    public void abrirModalNovaCategoria() {
+        WaitUtil.esperarElementoClicavel(
+                driver,
+                addNewCategory
+        ).click();
+    }
 
-        // Guarda a aba atual
+    public static void abrirTelaCategorias(WebDriver driver) {
+
         String janelaAtual = driver.getWindowHandle();
 
-        // Clica no botão que abre a tela de categorias em uma nova aba
-        driver.findElement(By.cssSelector("[data-testid='new-category-button']")).click();
+        driver.findElement(btnNewCategory).click();
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WaitUtil.esperarQuantidadeDeJanelas(driver, 2);
 
-        // Aguarda a abertura da nova aba
-        wait.until(ExpectedConditions.numberOfWindowsToBe(2));
-
-        // Troca o foco para a nova aba
         for (String janela : driver.getWindowHandles()) {
             if (!janela.equals(janelaAtual)) {
                 driver.switchTo().window(janela);
@@ -108,11 +138,15 @@ public class CategoriaPage {
             }
         }
 
-        // Aguarda o botão "Adicionar Categoria" ficar clicável e clica nele
-        wait.until(ExpectedConditions.elementToBeClickable(
-                By.cssSelector("[data-testid='add-category-btn']")
-        )).click();
+        WaitUtil.esperarElementoVisivel(driver, addNewCategory);
     }
 
+    public WebElement obterPrimeiraCategoria() {
+        List<WebElement> categorias = driver.findElements(
+                By.cssSelector("[data-testid^='edit-category-']")
+        );
+
+        return categorias.get(0);
+    }
 
 }

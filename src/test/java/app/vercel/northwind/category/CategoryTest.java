@@ -7,16 +7,10 @@ import app.vercel.northwind.utils.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.IOException;
-import java.time.Duration;
 
-import static app.vercel.northwind.utils.CategoryUtil.acessarTelaCategorias;
-import static app.vercel.northwind.utils.LoginUtil.realizarLogin;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,18 +24,39 @@ public class CategoryTest extends BaseTest {
     public void iniciarPagina(){
 
         loginPage = new LoginPage(driver);
-        categoriaPage = new CategoriaPage(driver);
-
         loginPage.realizarLogin(
                 TestData.EMAIL_VALIDO, TestData.PASSWORD_VALIDO);
-        categoriaPage.acessarTelaCategoriasEEsperaroBotaoFicarVisivelEClicavel(driver);
+        categoriaPage = new CategoriaPage(driver);
+        categoriaPage.abrirTelaCategorias(driver);
     }
 
     @Test
-    @DisplayName("Deve exibir erro ao tentar salvar categoria sem nome")
+    @DisplayName("Deve cadastrar uma categoria com sucesso")
+    public void deveCadastrarCategoriaComSucesso() throws Exception {
+        categoriaPage.abrirModalNovaCategoria();
+
+        String nomeCategoria = "Categoria_" + System.currentTimeMillis();
+
+        categoriaPage.preencherNomeCategoria(nomeCategoria);
+        categoriaPage.preencherDescricaoCategoria("Descrição sucinta de uma nova categoria.");
+        categoriaPage.clicarBtnSalvarCategoria();
+
+        assertTrue(categoriaPage.mensagemSucessoCriacaoCategoria());
+
+        assertEquals(
+                TestData.MSG_CATEGORIA_CADASTRADA,
+                categoriaPage.obterMensagemCategoriaCriadaComSucesso()
+        );
+
+        ScreenshotUtil.capturar(driver,"categoria-cadastrada-sucesso");
+    }
+
+    @Test
+    @DisplayName("Deve exibir mensagem quando nome da Categoria não for informado")
     public void deveExibirMensagemQuandoNomeCategoriaNaoInformado() throws IOException {
 
-        categoriaPage.preencherDescricao("Descrição válida com mais de 10 caracteres");
+        categoriaPage.abrirModalNovaCategoria();
+        categoriaPage.preencherDescricaoCategoria("Descrição válida com mais de 10 caracteres");
         categoriaPage.clicarBtnSalvarCategoria();
 
         assertTrue(categoriaPage.mensagemErroNomeCategoriaVisivel());
@@ -54,9 +69,10 @@ public class CategoryTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Deve exibir mensagem ao tentar cadastrar categoria sem informar descrição")
-    public void deveExibirMensagemAoCadastrarCategoriaSemDescricao() throws Exception {
+    @DisplayName("Deve exibir mensagem quando a descrição da categoria não for informada")
+    public void deveExibirMensagemQuandoDescricaoNaoInformada() throws Exception {
 
+        categoriaPage.abrirModalNovaCategoria();
         categoriaPage.preencherNomeCategoria("Nome Categoria");
         categoriaPage.clicarBtnSalvarCategoria();
 
@@ -70,11 +86,12 @@ public class CategoryTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Deve exibir menagem ao informar nome com menos de 2 caracteres")
+    @DisplayName("Deve exibir menagem quando o nome possuir menos de 2 caracteres")
     public void deveExibirMensagemAoInformaNomeComMenosDe2Caracteres() throws Exception {
+        categoriaPage.abrirModalNovaCategoria();
 
         categoriaPage.preencherNomeCategoria("A");
-        categoriaPage.preencherDescricao("Descrição válida para categoria");
+        categoriaPage.preencherDescricaoCategoria("Descrição válida para categoria");
         categoriaPage.clicarBtnSalvarCategoria();
 
         assertTrue(categoriaPage.mensagemErroNomeCategoriaVisivel());
@@ -87,13 +104,14 @@ public class CategoryTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Deve exibir mensagem ao informar nome com mais de 50 caracteres")
+    @DisplayName("Deve exibir mensagem quando o nome possuir mais de 50 caracteres")
     public void deveExibirMensagemAoInformarNomeComMaisDe50Caracteres() throws Exception{
+        categoriaPage.abrirModalNovaCategoria();
 
         String nomeCategoria = "A".repeat(51);
 
         categoriaPage.preencherNomeCategoria(nomeCategoria);
-        categoriaPage.preencherDescricao("Descrição válida para categoria");
+        categoriaPage.preencherDescricaoCategoria("Descrição válida para categoria");
         categoriaPage.clicarBtnSalvarCategoria();
 
         assertTrue(categoriaPage.mensagemErroNomeCategoriaVisivel());
@@ -106,62 +124,56 @@ public class CategoryTest extends BaseTest {
     }
 
     @Test
-    @DisplayName("Deve cadastrar categoria com sucesso")
-    public void deveCadastrarCategoriaComSucesso() throws Exception {
-        String nomeCategoria = "Categoria_" + System.currentTimeMillis();
+    @DisplayName("Deve exibir mensagem quando a descriçao possuir menos de 10 caracteres")
+    public void deveExibirMensagemQuandoADescricaoPossuirMenosDe10Caracteres() throws Exception{
+        categoriaPage.abrirModalNovaCategoria();
 
-        categoriaPage.preencherNomeCategoria(nomeCategoria);
-        categoriaPage.preencherDescricao("Descrição sucinta de uma nova categoria.");
+        String descricaoCategoria = "Categoria";
+
+        categoriaPage.preencherNomeCategoria("Categoria Teste");
+        categoriaPage.preencherDescricaoCategoria(descricaoCategoria);
         categoriaPage.clicarBtnSalvarCategoria();
 
-        assertTrue(categoriaPage.mensagemSucessooCriacaoCategoria());
+        assertTrue(categoriaPage.mensagemErroDescricaoCategoriaVisivel());
 
-        assertEquals(
-                TestData.MSG_CATEGORIA_CADASTRADA,
-                categoriaPage.obterMensagemCategoriaCriadaComSucesso()
-        );
-
-        ScreenshotUtil.capturar(driver,"categoria-cadastrada-sucesso");
+        assertEquals(TestData.MSG_DESCRICAO_LIMITE, categoriaPage.obterMensagemErroDescricaoCategoria());
     }
 
     @Test
-    @DisplayName("Deve fechar modal ao cancelar cadastro")
-    public void deveCancelarCadastroCategoria() throws Exception {
+    @DisplayName("Deve exibir mensagem quando a descriçao possuir menos de 200 caracteres")
+    public void deveExibirMensagemQuandoADescricaoPossuirMenosDe200Caracteres() throws Exception{
+        categoriaPage.abrirModalNovaCategoria();
 
+        String descricaoCategoria = "A".repeat(201);
 
-        categoriaPage.clicarBtnCancelarCategoria();
+        categoriaPage.preencherNomeCategoria("Categoria Teste");
+        categoriaPage.preencherDescricaoCategoria(descricaoCategoria);
+        categoriaPage.clicarBtnSalvarCategoria();
 
-        assertTrue(
-                driver.findElements(
-                                By.cssSelector("[data-testid='category-name-input']"))
-                        .isEmpty());
+        assertTrue(categoriaPage.mensagemErroDescricaoCategoriaVisivel());
 
-        ScreenshotUtil.capturar(driver,"cancelar-cadastro-categoria");
+        assertEquals(TestData.MSG_DESCRICAO_LIMITE, categoriaPage.obterMensagemErroDescricaoCategoria());
     }
 
     @Test
     @DisplayName("Deve editar um item da categoria")
     public void deveEditarCategoria() throws Exception {
-
-        realizarLogin(driver);
-        acessarTelaCategorias(driver);
-
-        driver.findElement(By.cssSelector("[data-testid='category-search']")).sendKeys("Categoria_");
-        driver.findElement(By.cssSelector("[data-testid='edit-category-517']")).click();
-
-        driver.findElement(By.cssSelector("[data-testid='edit-category-name-input']")).click();
-        driver.findElement(By.cssSelector("[data-testid='edit-category-name-input']")).clear();
-        driver.findElement(By.cssSelector("[data-testid='edit-category-name-input']")).sendKeys("Calça Jeans");
-
-        driver.findElement(By.cssSelector("[data-testid='edit-category-description-input']")).click();
-        driver.findElement(By.cssSelector("[data-testid='edit-category-description-input']")).clear();
-        driver.findElement(By.cssSelector("[data-testid='edit-category-description-input']"))
-                .sendKeys("Alteração da descrição para teste automatizado edição.");
-
-        driver.findElement(By.cssSelector("[data-testid='update-category-btn']")).click();
+        categoriaPage.searchCategory("Categoria_");
+        categoriaPage.openModalEditCategory();
+        categoriaPage.clearNameCategory();
+        categoriaPage.editNameCategory("Calça Jeans Levis Bootcup");
+        categoriaPage.clickBtnUpdateCategory();
 
 
-        ScreenshotUtil.capturar(driver,"categoria_editada");
+//        driver.findElement(By.cssSelector("[data-testid='edit-category-description-input']")).click();
+//        driver.findElement(By.cssSelector("[data-testid='edit-category-description-input']")).clear();
+//        driver.findElement(By.cssSelector("[data-testid='edit-category-description-input']"))
+//                .sendKeys("Alteração da descrição para teste automatizado edição.");
+//
+//        driver.findElement(By.cssSelector("[data-testid='update-category-btn']")).click();
+
+
+        ScreenshotUtil.capturar(driver,"update-categoria");
 
 
 

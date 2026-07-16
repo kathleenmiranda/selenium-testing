@@ -88,7 +88,7 @@ public class TestData {
     public static final String MSG_NOME_INVALIDO =
             "Deve ter entre 2 e 50 caracteres";
 
-    public static final String MSG_DESCRICAO_INVALIDA =
+    public static final String MSG_DESCRICAO_LIMITE =
             "Deve ter entre 10 e 200 caracteres";
 
     public static final String MSG_CATEGORIA_CADASTRADA =

@@ -8,4 +8,11 @@ public class DataGenerator {
         return "qa_" + UUID.randomUUID() + "@teste.com";
     }
 
+    public static String gerarNomeCategoria() {
+        String nomeCategoria =
+                "Categoria_" + System.currentTimeMillis();
+
+        return nomeCategoria;
+    }
+
 }

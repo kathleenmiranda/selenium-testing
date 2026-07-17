@@ -3,16 +3,16 @@ package app.vercel.northwind.category;
 import app.vercel.northwind.base.BaseTest;
 import app.vercel.northwind.page.CategoriaPage;
 import app.vercel.northwind.page.LoginPage;
-import app.vercel.northwind.utils.*;
+import app.vercel.northwind.utils.TestData;
+import app.vercel.northwind.utils.DataGenerator;
+import app.vercel.northwind.utils.ScreenshotUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class CategoryTest extends BaseTest {
@@ -35,9 +35,8 @@ public class CategoryTest extends BaseTest {
     public void deveCadastrarCategoriaComSucesso() throws Exception {
         categoriaPage.abrirModalNovaCategoria();
 
-        String nomeCategoria = "Categoria_" + System.currentTimeMillis();
 
-        categoriaPage.preencherNomeCategoria(nomeCategoria);
+        categoriaPage.preencherNomeCategoria(DataGenerator.gerarNomeCategoria());
         categoriaPage.preencherDescricaoCategoria("Descrição sucinta de uma nova categoria.");
         categoriaPage.clicarBtnSalvarCategoria();
 
@@ -63,7 +62,7 @@ public class CategoryTest extends BaseTest {
 
         assertEquals(
                 TestData.MSG_NOME_CATEGORIA_OBRIGATORIO,
-                categoriaPage.obterMensagemErroNomeCategooria());
+                categoriaPage.obterMensagemErroNomeCategoria());
 
         ScreenshotUtil.capturar(driver,"nome_categoria_obrigatorio");
     }
@@ -98,7 +97,7 @@ public class CategoryTest extends BaseTest {
 
         assertEquals(
                 TestData.MSG_NOME_INVALIDO,
-                categoriaPage.obterMensagemErroNomeCategooria());
+                categoriaPage.obterMensagemErroNomeCategoria());
 
         ScreenshotUtil.capturar(driver,"categoria-nome-curto");
     }
@@ -118,14 +117,14 @@ public class CategoryTest extends BaseTest {
 
         assertEquals(
                 TestData.MSG_NOME_INVALIDO,
-                categoriaPage.obterMensagemErroNomeCategooria());
+                categoriaPage.obterMensagemErroNomeCategoria());
 
         ScreenshotUtil.capturar(driver,"categoria-nome-maximo");
     }
 
     @Test
     @DisplayName("Deve exibir mensagem quando a descriçao possuir menos de 10 caracteres")
-    public void deveExibirMensagemQuandoADescricaoPossuirMenosDe10Caracteres() throws Exception{
+    public void deveExibirMensagemQuandoADescricaoPossuirMenosDe10Caracteres(){
         categoriaPage.abrirModalNovaCategoria();
 
         String descricaoCategoria = "Categoria";
@@ -141,7 +140,7 @@ public class CategoryTest extends BaseTest {
 
     @Test
     @DisplayName("Deve exibir mensagem quando a descriçao possuir menos de 200 caracteres")
-    public void deveExibirMensagemQuandoADescricaoPossuirMenosDe200Caracteres() throws Exception{
+    public void deveExibirMensagemQuandoADescricaoPossuirMaisDe200Caracteres() {
         categoriaPage.abrirModalNovaCategoria();
 
         String descricaoCategoria = "A".repeat(201);
@@ -155,31 +154,32 @@ public class CategoryTest extends BaseTest {
         assertEquals(TestData.MSG_DESCRICAO_LIMITE, categoriaPage.obterMensagemErroDescricaoCategoria());
     }
 
+    @Deprecated
     @Test
     @DisplayName("Deve editar um item da categoria")
     public void deveEditarCategoria() throws Exception {
-        categoriaPage.searchCategory("Categoria_");
-        categoriaPage.openModalEditCategory();
-        categoriaPage.clearNameCategory();
-        categoriaPage.editNameCategory("Calça Jeans Levis Bootcup");
-        categoriaPage.clickBtnUpdateCategory();
-
-
-//        driver.findElement(By.cssSelector("[data-testid='edit-category-description-input']")).click();
-//        driver.findElement(By.cssSelector("[data-testid='edit-category-description-input']")).clear();
-//        driver.findElement(By.cssSelector("[data-testid='edit-category-description-input']"))
-//                .sendKeys("Alteração da descrição para teste automatizado edição.");
-//
-//        driver.findElement(By.cssSelector("[data-testid='update-category-btn']")).click();
+        categoriaPage.pesquisarCategoria("Categoria_");
+        categoriaPage.abrirModalEditarCategoria();
+        categoriaPage.limparNomeCategoria();
+        categoriaPage.editarNomeCategoria("Calça Jeans Levis Bootcup");
+        categoriaPage.clicarBotaoAtualizarCategoria();
 
 
         ScreenshotUtil.capturar(driver,"update-categoria");
+    }
 
+    @Deprecated
+    @Test
+    @DisplayName("Deve excluir um item da categoria")
+    public void deveExcluirCategoria() throws Exception {
+        categoriaPage.pesquisarCategoria("Categoria_");
+        categoriaPage.openModalDeleteCategory();
+        categoriaPage.clickConfirmDeleteCategory();
 
+        assertTrue(categoriaPage.mensagemCategoriaExcluidaVisivel());
 
+        assertEquals(TestData.MSG_CATEGORIA_EXCLUIDA_COM_SUCESSO,  categoriaPage.obterMensagemDeleteCategoria());
 
-
-
-
+        ScreenshotUtil.capturar(driver,"delete-categoria");
     }
 }

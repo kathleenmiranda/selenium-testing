@@ -11,10 +11,11 @@ import java.util.List;
 
 public class CategoriaPage {
     private final WebDriver driver;
-    private static By btnNewCategory =
+    private static final By btnNewCategory =
             By.cssSelector("[data-testid='new-category-button']");
-    private static  By addNewCategory =
+    private static final By addNewCategory =
             By.cssSelector("[data-testid='add-category-btn']");
+
     private final By inputDescription =
             By.cssSelector("[data-testid='category-description-input']");
     private final By inputCategory =
@@ -29,12 +30,17 @@ public class CategoriaPage {
     private final By toast =
             By.cssSelector(".Toastify__toast--success");
 
+    private final By toastCategoryDeleteSuccess =
+            By.cssSelector(".Toastify__toast");
+
     private final By searchCategory =
             By.cssSelector("[data-testid='category-search']");
     private final By inputEditCategoryName =
             By.cssSelector("[data-testid='edit-category-name-input']");
     private final By btnUpdateCategory =
             By.cssSelector("[data-testid='update-category-btn']");
+    private final By btnConfirmDeleteCategory =
+            By.cssSelector("[data-testid='confirm-delete-category-btn']");
 
 
     public CategoriaPage(WebDriver driver) {
@@ -54,25 +60,35 @@ public class CategoriaPage {
         driver.findElement(btnSaveCategory).click();
     }
 
-    public void searchCategory(String category){
+    public void pesquisarCategoria(String category){
         driver.findElement(searchCategory
         ).sendKeys(category);
     }
 
-    public void openModalEditCategory() {
+    public void abrirModalEditarCategoria() {
         obterPrimeiraCategoria().click();
     }
-    public void clearNameCategory(){
+
+    public void openModalDeleteCategory(){
+        obterPrimeiroItemDeCategoriaParaExclusao(
+
+        ).click();
+    }
+
+    public void clickConfirmDeleteCategory(){
+        driver.findElement(btnConfirmDeleteCategory).click();
+    }
+    public void limparNomeCategoria(){
         driver.findElement(
                 inputEditCategoryName
         ).clear();
     }
 
-    public void editNameCategory(String AtualizaNameCategory){
+    public void editarNomeCategoria(String novoNomeCategoria){
         driver.findElement(inputEditCategoryName
-        ).sendKeys(AtualizaNameCategory);
+        ).sendKeys(novoNomeCategoria);
     }
-    public void clickBtnUpdateCategory(){
+    public void clicarBotaoAtualizarCategoria(){
         driver.findElement(
                 btnUpdateCategory
         ).click();
@@ -80,12 +96,31 @@ public class CategoriaPage {
     }
 
 
-    public String obterMensagemErroNomeCategooria() {
+    public String obterMensagemErroNomeCategoria() {
         return driver.findElement(errorNameCategory
         ).getText();
     }
     public boolean mensagemErroNomeCategoriaVisivel() {
         return driver.findElement(errorNameCategory
+        ).isDisplayed();
+    }
+
+    public String obterMensagemDeleteCategoria() {
+        WaitUtil.esperarElementoVisivel(
+                driver,
+                toastCategoryDeleteSuccess
+        );
+        return driver.findElement(
+                toastCategoryDeleteSuccess
+        ).getText();
+    }
+    public boolean mensagemCategoriaExcluidaVisivel() {
+        WaitUtil.esperarElementoVisivel(
+                driver,
+                toastCategoryDeleteSuccess
+        );
+
+        return driver.findElement(toastCategoryDeleteSuccess
         ).isDisplayed();
     }
     public String obterMensagemErroDescricaoCategoria() {
@@ -123,7 +158,7 @@ public class CategoriaPage {
         ).click();
     }
 
-    public static void abrirTelaCategorias(WebDriver driver) {
+    public void abrirTelaCategorias(WebDriver driver) {
 
         String janelaAtual = driver.getWindowHandle();
 
@@ -146,7 +181,26 @@ public class CategoriaPage {
                 By.cssSelector("[data-testid^='edit-category-']")
         );
 
+        if (categorias.isEmpty()) {
+            throw new IllegalStateException(
+                    "Nenhuma categoria encontrada."
+            );
+        }
         return categorias.get(0);
+    }
+
+    public WebElement obterPrimeiroItemDeCategoriaParaExclusao() {
+        List<WebElement> excluirCategoria =
+                driver.findElements(
+                        By.cssSelector("[data-testid^='delete-category-']")
+        );
+        if (excluirCategoria.isEmpty()) {
+            throw new IllegalStateException(
+                    "Nenhuma categoria encontrada para exclusão."
+            );
+        }
+
+        return excluirCategoria.get(0);
     }
 
 }

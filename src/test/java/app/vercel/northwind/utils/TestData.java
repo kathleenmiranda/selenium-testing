@@ -94,6 +94,9 @@ public class TestData {
     public static final String MSG_CATEGORIA_CADASTRADA =
             "Categoria cadastrada com sucesso!";
 
-    public static final String MSG_USUARIO_SEM_TOKEN =
+    public static final String  MSG_USUARIO_SEM_TOKEN =
             "Você precisa estar logado";
+
+    public static final String MSG_CATEGORIA_EXCLUIDA_COM_SUCESSO =
+            "Categoria excluída com sucesso!";
 }
